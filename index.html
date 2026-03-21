@@ -7,90 +7,102 @@
     <style>
         :root { --gold: #ffc107; --bg: #0a0a0a; --card: #161616; }
         body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: white; margin: 0; padding: 15px; }
-        header { text-align: center; padding: 20px; background: #111; border-bottom: 3px solid var(--gold); border-radius: 15px; margin-bottom: 20px;}
+        header { text-align: center; padding: 20px; border-bottom: 3px solid var(--gold); border-radius: 15px; margin-bottom: 20px;}
         .input-section { background: #1a1a1a; padding: 20px; border-radius: 15px; border: 1px solid var(--gold); margin-bottom: 25px; }
-        input { width: 100%; padding: 12px; margin: 10px 0; border-radius: 8px; border: none; background: #222; color: white; box-sizing: border-box; }
-        .btn { background: var(--gold); color: black; border: none; padding: 12px; border-radius: 8px; width: 100%; font-weight: bold; cursor: pointer; }
-        .grid { display: grid; grid-auto-flow: row; gap: 20px; }
-        .card { background: var(--card); border-radius: 15px; overflow: hidden; border: 1px solid #333; margin-bottom: 20px; }
+        input { width: 100%; padding: 12px; margin: 10px 0; border-radius: 8px; border: none; background: #222; color: white; box-sizing: border-box; font-size: 16px; }
+        .btn { background: var(--gold); color: black; border: none; padding: 12px; border-radius: 8px; width: 100%; font-weight: bold; cursor: pointer; display: block; text-decoration: none; text-align: center; margin-top: 10px; }
         
-        /* هذا الجزء هو سر الحل: جعل المشغل يظهر بشكل كامل */
-        .video-container { position: relative; width: 100%; padding-bottom: 56.25%; height: 0; }
-        .video-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
+        /* زر التحميل بلون أخضر مميز */
+        .download-btn { background: #28a745; color: white; margin-top: 10px; transition: 0.3s; }
+        .download-btn:hover { background: #218838; }
 
+        .card { background: var(--card); border-radius: 15px; overflow: hidden; border: 1px solid #333; margin-bottom: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
+        
+        /* حاوية الفيديو لضمان التناسب 16:9 */
+        .video-wrapper { position: relative; padding-bottom: 56.25%; height: 0; background: #000; }
+        .video-wrapper iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
+        
         .card-body { padding: 15px; text-align: center; }
-        .delete-btn { background: #ff4444; color: white; margin-top: 10px; font-size: 0.8rem; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; }
+        .card-body h3 { margin: 0 0 10px 0; color: var(--gold); }
+        .delete-btn { background: #ff4444; color: white; border: none; padding: 6px 12px; border-radius: 5px; cursor: pointer; margin-top: 15px; font-size: 12px; opacity: 0.7; }
+        .delete-btn:hover { opacity: 1; }
     </style>
 </head>
 <body>
 
     <header>
         <h1>موقع أحمد السليمان</h1>
-        <p>بوابة مسلسلات رمضان 🌙</p>
+        <p>بوابة مسلسلات رمضان 2026 🌙</p>
     </header>
 
     <div class="input-section">
         <input type="text" id="titleInput" placeholder="اكتب اسم المسلسل والحلقة">
-        <input type="text" id="urlInput" placeholder="ضع رابط الفيديو من Google Drive">
+        <input type="text" id="urlInput" placeholder="ضع رابط Google Drive هنا">
         <button class="btn" onclick="addVideo()">إضافة الحلقة للموقع</button>
     </div>
 
-    <div id="mainGrid" class="grid"></div>
+    <div id="mainGrid"></div>
 
     <script>
+        // تحميل البيانات عند فتح الصفحة
         window.onload = function() { displayVideos(); };
 
         function addVideo() {
             const title = document.getElementById('titleInput').value;
             let rawUrl = document.getElementById('urlInput').value;
+            
+            // دالة برمجية لاستخراج ID الفيديو من رابط جوجل درايف
+            let videoId = "";
+            const match = rawUrl.match(/\/d\/(.+?)\//) || rawUrl.match(/id=(.+?)(&|$)/);
+            if (match) videoId = match[1];
 
-            if(title && rawUrl) {
-                // استخراج الـ ID وتحويله لرابط "مشغل جوجل"
-                let videoId = "";
-                if (rawUrl.includes("file/d/")) {
-                    videoId = rawUrl.split("file/d/")[1].split("/")[0];
-                } else if (rawUrl.includes("id=")) {
-                    videoId = rawUrl.split("id=")[1].split("&")[0];
-                }
-
-                if (videoId) {
-                    const embedUrl = `https://drive.google.com/file/d/${videoId}/preview`;
-                    let videos = JSON.parse(localStorage.getItem('ahmed_list')) || [];
-                    videos.push({ title, url: embedUrl });
-                    localStorage.setItem('ahmed_list', JSON.stringify(videos));
-                    
-                    document.getElementById('titleInput').value = '';
-                    document.getElementById('urlInput').value = '';
-                    displayVideos();
-                } else {
-                    alert("الرابط غير صحيح، انسخ الرابط من جوجل درايف مباشرة");
-                }
-            } else { alert("يرجى تعبئة الاسم والرابط"); }
+            if(title && videoId) {
+                let videos = JSON.parse(localStorage.getItem('ahmed_list')) || [];
+                // تخزين الـ ID فقط لضمان مرونة الروابط
+                videos.push({ title: title, id: videoId });
+                localStorage.setItem('ahmed_list', JSON.stringify(videos));
+                
+                // تفريغ الخانات
+                document.getElementById('titleInput').value = '';
+                document.getElementById('urlInput').value = '';
+                
+                displayVideos();
+            } else {
+                alert("يرجى التأكد من كتابة الاسم ووضع رابط جوجل درايف صحيح");
+            }
         }
 
         function displayVideos() {
             const grid = document.getElementById('mainGrid');
             const videos = JSON.parse(localStorage.getItem('ahmed_list')) || [];
             grid.innerHTML = '';
+            
             videos.forEach((vid, index) => {
+                // رابط المشغل (Preview) ورابط التحميل المباشر (Download)
+                const embedUrl = `https://drive.google.com/file/d/${vid.id}/preview`;
+                const downloadUrl = `https://drive.google.com/uc?export=download&id=${vid.id}`;
+                
                 grid.innerHTML += `
                     <div class="card">
-                        <div class="video-container">
-                            <iframe src="${vid.url}" allow="autoplay"></iframe>
+                        <div class="video-wrapper">
+                            <iframe src="${embedUrl}" allow="autoplay"></iframe>
                         </div>
                         <div class="card-body">
                             <h3>${vid.title}</h3>
-                            <button class="delete-btn" onclick="deleteVideo(${index})">حذف</button>
+                            <a href="${downloadUrl}" target="_blank" class="btn download-btn">تحميل الحلقة (للمشاهدة بدون إنترنت) 📥</a>
+                            <button class="delete-btn" onclick="deleteVideo(${index})">حذف من القائمة</button>
                         </div>
                     </div>`;
             });
         }
 
         function deleteVideo(index) {
-            let videos = JSON.parse(localStorage.getItem('ahmed_list')) || [];
-            videos.splice(index, 1);
-            localStorage.setItem('ahmed_list', JSON.stringify(videos));
-            displayVideos();
+            if(confirm("هل تريد حذف هذه الحلقة؟")) {
+                let videos = JSON.parse(localStorage.getItem('ahmed_list')) || [];
+                videos.splice(index, 1);
+                localStorage.setItem('ahmed_list', JSON.stringify(videos));
+                displayVideos();
+            }
         }
     </script>
 </body>
