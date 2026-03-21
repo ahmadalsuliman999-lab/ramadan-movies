@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>موقع أحمد السليمان - مسلسلات رمضان</title>
+    <style>
+        :root { --gold: #ffc107; --bg: #0d0d0d; --card: #1a1a1a; }
+        body { font-family: sans-serif; background: var(--bg); color: white; margin: 0; padding: 15px; }
+        
+        header { text-align: center; padding: 30px; border-bottom: 3px solid var(--gold); margin-bottom: 30px; border-radius: 15px; background: #111; }
+        
+        /* قسم رفع الملفات (خاص بك) */
+        .admin-zone { background: #222; padding: 15px; border-radius: 10px; margin-bottom: 30px; border: 1px dashed var(--gold); }
+        .upload-btn { background: var(--gold); color: black; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold; }
+        input[type="file"] { display: none; }
+
+        /* نظام النوافذ (Grid) */
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
+        
+        .card { background: var(--card); border-radius: 15px; overflow: hidden; border: 1px solid #333; transition: 0.3s; }
+        .card:hover { transform: translateY(-5px); border-color: var(--gold); }
+        
+        .video-container { width: 100%; aspect-ratio: 16/9; background: #000; }
+        video { width: 100%; height: 100%; }
+
+        .card-body { padding: 15px; text-align: center; }
+        .card-title { margin-bottom: 15px; font-weight: bold; font-size: 1.1rem; }
+
+        /* زر المشاهدة */
+        .watch-btn { 
+            background: linear-gradient(45deg, #ffc107, #ff9800); 
+            color: black; border: none; padding: 12px; border-radius: 8px; 
+            width: 100%; font-weight: bold; cursor: pointer; display: flex; 
+            align-items: center; justify-content: center; gap: 10px;
+        }
+        .watch-btn:hover { opacity: 0.9; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>موقع أحمد السليمان</h1>
+        <p>بوابة مسلسلات رمضان 2026 🌙</p>
+    </header>
+
+    <div class="admin-zone">
+        <h4 style="margin-top:0;">إضافة حلقة جديدة للموقع:</h4>
+        <label class="upload-btn">
+            <input type="file" id="fileInput" accept="video/*">
+            اختر ملف الفيديو لرفعه
+        </label>
+    </div>
+
+    <div class="grid" id="episodesGrid">
+        </div>
+
+    <script>
+        const fileInput = document.getElementById('fileInput');
+        const grid = document.getElementById('episodesGrid');
+
+        // وظيفة الرفع وإنشاء نافذة جديدة
+        fileInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const url = URL.createObjectURL(file);
+                createEpisodeCard(file.name, url);
+            }
+        });
+
+        function createEpisodeCard(title, videoUrl) {
+            const card = document.createElement('div');
+            card.className = 'card';
+            
+            card.innerHTML = `
+                <div class="video-container">
+                    <video id="vid-${Date.now()}" poster="https://via.placeholder.com/400x225/111/ffc107?text=احمد+السليمان">
+                        <source src="${videoUrl}" type="video/mp4">
+                    </video>
+                </div>
+                <div class="card-body">
+                    <div class="card-title">${title}</div>
+                    <button class="watch-btn" onclick="togglePlay(this)">
+                        <span>▶</span> زر المشاهدة
+                    </button>
+                </div>
+            `;
+            grid.prepend(card);
+        }
+
+        function togglePlay(btn) {
+            const video = btn.closest('.card').querySelector('video');
+            if (video.paused) {
+                // إغلاق أي فيديو آخر يعمل
+                document.querySelectorAll('video').forEach(v => v.pause());
+                video.play();
+                btn.innerHTML = "<span>⏸</span> إيقاف مؤقت";
+            } else {
+                video.pause();
+                btn.innerHTML = "<span>▶</span> زر المشاهدة";
+            }
+        }
+    </script>
+</body>
+</html>
