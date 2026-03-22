@@ -5,117 +5,151 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>الموقع الرسمي لأحمد السليمان</title>
     <style>
-        :root { --gold: #ffc107; --bg: #0a0a0a; --card: #161616; }
+        :root { --gold: #ffc107; --bg: #050505; --card: #121212; --accent: #1e1e1e; }
         body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: white; padding: 0; margin: 0; }
         
-        /* الهيدر الرسمي */
         header { 
             background: linear-gradient(to bottom, #1a1a1a, var(--bg)); 
-            padding: 25px 10px; text-align: center; border-bottom: 2px solid var(--gold);
+            padding: 30px 10px; text-align: center; border-bottom: 2px solid var(--gold);
         }
         header h1 { margin: 0; font-size: 1.6rem; color: var(--gold); }
 
-        /* لوحة التحكم: مخفية افتراضياً */
+        /* لوحة التحكم السرية */
         #adminPanel { 
-            display: none; 
-            background: #222; padding: 15px; border-radius: 12px; 
-            border: 2px solid var(--gold); margin: 15px; 
+            display: none; background: var(--accent); padding: 20px; border-radius: 12px;
+            border: 1px solid var(--gold); margin: 15px; 
         }
-        input { width: 100%; padding: 10px; margin: 5px 0; border-radius: 8px; border: 1px solid #444; background: #000; color: white; box-sizing: border-box; }
+        .admin-section { background: #000; padding: 15px; border-radius: 10px; margin-bottom: 15px; border: 1px solid #333; }
+        input { width: 100%; padding: 12px; margin: 8px 0; border-radius: 8px; border: 1px solid #333; background: #000; color: white; box-sizing: border-box; }
         
-        /* شبكة المجلدات: 3 في الصف الواحد */
-        .folders-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; padding: 15px; }
-        .folder-item { background: var(--card); border-radius: 12px; overflow: hidden; border: 1px solid #333; cursor: pointer; transition: 0.3s; }
-        .folder-item:hover { border-color: var(--gold); transform: translateY(-3px); }
-        .folder-poster { width: 100%; height: 120px; background: linear-gradient(45deg, #111, #333); display: flex; align-items: center; justify-content: center; font-size: 2rem; }
-        .folder-name { padding: 8px; font-size: 0.8rem; font-weight: bold; text-align: center; color: var(--gold); }
+        /* جدول سجل الزوار */
+        table { width: 100%; border-collapse: collapse; font-size: 0.8rem; margin-top: 10px; }
+        th, td { border: 1px solid #333; padding: 8px; text-align: center; }
+        th { background: var(--gold); color: black; }
 
-        /* النافذة المنبثقة */
-        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 9999; justify-content: center; align-items: flex-start; overflow-y: auto; padding-top: 30px; }
-        .modal-body { background: #111; width: 95%; max-width: 800px; border-radius: 20px; border: 1px solid var(--gold); padding: 15px; position: relative; margin-bottom: 50px; }
-        
-        /* شبكة الحلقات داخل المجلد: حلقتين في الصف الواحد */
-        .episodes-container { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
-        .ep-card { background: #222; border-radius: 10px; overflow: hidden; border: 1px solid #444; }
-        .video-box { position: relative; padding-bottom: 56.25%; height: 0; }
-        .video-box iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
-        
-        .btn { display: block; width: 100%; padding: 8px; border-radius: 6px; font-weight: bold; cursor: pointer; text-decoration: none; border: none; text-align: center; }
+        .folders-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; padding: 15px; }
+        .folder-card { background: var(--card); border-radius: 12px; overflow: hidden; border: 1px solid #222; cursor: pointer; transition: 0.3s; }
+        .folder-card:hover { border-color: var(--gold); transform: translateY(-3px); }
+        .folder-img { width: 100%; height: 110px; background: #222; display: flex; align-items: center; justify-content: center; font-size: 2rem; }
+        .folder-name { padding: 8px; text-align: center; font-size: 0.75rem; color: #eee; }
+
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 10000; overflow-y: auto; padding-top: 30px; }
+        .modal-content { background: #000; width: 95%; max-width: 800px; margin: auto; border-radius: 20px; border: 1px solid var(--gold); padding: 15px; position: relative; }
+        .episodes-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+        .ep-card { background: #111; border-radius: 10px; overflow: hidden; border: 1px solid #333; }
+        .video-container { position: relative; padding-bottom: 56.25%; height: 0; }
+        .video-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
+
+        .btn { display: block; width: 100%; padding: 10px; border-radius: 8px; font-weight: bold; cursor: pointer; border: none; text-align: center; }
         .add-btn { background: var(--gold); color: black; margin-top: 10px; }
         .close-btn { background: #ff4444; color: white; padding: 5px 15px; border-radius: 8px; margin-bottom: 10px; float: left; cursor: pointer; }
-        
-        /* الزر السري لفتح لوحة التحكم */
-        .secret-trigger { position: fixed; bottom: 0; right: 0; width: 30px; height: 30px; background: transparent; cursor: pointer; z-index: 1000; }
 
-        @media (max-width: 500px) {
-            .folder-poster { height: 100px; font-size: 1.5rem; }
-            .folder-name { font-size: 0.7rem; }
-        }
+        .secret-trigger { position: fixed; bottom: 0; left: 0; width: 40px; height: 40px; background: transparent; cursor: pointer; z-index: 999; }
+        footer { text-align: center; padding: 20px; color: #444; font-size: 0.7rem; }
     </style>
 </head>
 <body>
 
     <header>
-        <h1>الموقع الرسمي لأحمد السليمان</h1>
+        <h1 id="welcomeText">الموقع الرسمي لأحمد السليمان</h1>
     </header>
 
     <div id="adminPanel">
-        <h3 style="color:var(--gold); margin:0 0 10px 0;">لوحة المدير 🛠️</h3>
-        <input type="text" id="fName" placeholder="اسم المجلد (المسلسل)">
-        <input type="text" id="eTitle" placeholder="اسم الحلقة (مثلاً: حلقة 1)">
-        <input type="text" id="uLink" placeholder="رابط Google Drive">
-        <button class="btn add-btn" onclick="addNewEp()">إضافة الحلقة</button>
-        <button onclick="hideAdmin()" style="background:none; color:#777; border:none; margin-top:10px; width:100%; cursor:pointer;">إغلاق اللوحة</button>
+        <div class="admin-section">
+            <h4 style="color:var(--gold); margin:0;">👥 سجل الزوار (الأسماء)</h4>
+            <div id="visitorList" style="max-height: 200px; overflow-y: auto;">
+                <table>
+                    <thead><tr><th>الاسم</th><th>التوقيت</th></tr></thead>
+                    <tbody id="visitorTableBody"></tbody>
+                </table>
+            </div>
+            <button onclick="clearVisitors()" style="background:none; color:#ff4444; border:none; font-size:0.7rem; cursor:pointer; margin-top:5px;">مسح السجل</button>
+        </div>
+
+        <div class="admin-section">
+            <h4 style="color:var(--gold); margin:0;">🎬 إضافة حلقة</h4>
+            <input type="text" id="fName" placeholder="اسم المسلسل">
+            <input type="text" id="eTitle" placeholder="رقم الحلقة">
+            <input type="text" id="uLink" placeholder="رابط Google Drive">
+            <button class="btn add-btn" onclick="addNewEp()">نشر الآن</button>
+        </div>
+        <button onclick="document.getElementById('adminPanel').style.display='none'" style="width:100%; background:none; color:#555; border:none; cursor:pointer;">إغلاق</button>
     </div>
 
-    <div id="foldersBox" class="folders-grid"></div>
+    <div class="folders-grid" id="foldersBox"></div>
 
-    <div id="modalBox" class="modal-overlay">
-        <div class="modal-body">
+    <div id="vModal" class="modal">
+        <div class="modal-content">
             <button class="close-btn" onclick="closeFolder()">إغلاق ×</button>
-            <div id="modalTitle" style="text-align:center; color:var(--gold); margin-bottom:15px; font-size:1.2rem; clear:both;"></div>
-            <div id="episodesBox" class="episodes-container"></div>
+            <div id="mTitle" style="text-align:center; color:var(--gold); margin: 15px 0; font-size: 1.1rem; clear:both;"></div>
+            <div id="epsBox" class="episodes-grid"></div>
         </div>
     </div>
 
-    <div class="secret-trigger" onclick="checkAdmin()"></div>
+    <footer><p>© أحمد السليمان 2026</p></footer>
+    <div class="secret-trigger" onclick="openAdmin()"></div>
 
     <script>
-        // استخدام اسم قاعدة البيانات الذي وضعت فيه فيديوهاتك سابقاً لضمان ظهورها
         const DB_NAME = 'ahmed_series_db';
+        const VISITORS_DB = 'ahmed_visitors_db';
 
-        window.onload = function() { renderUI(); };
+        window.onload = function() { 
+            askName();
+            renderUI(); 
+        };
 
-        function checkAdmin() {
-            const pass = prompt("أدخل كلمة مرور المدير للتحميل:");
-            if(pass === "1234") {
+        // دالة طلب الاسم من الزائر
+        function askName() {
+            let name = sessionStorage.getItem('visitor_name');
+            if (!name) {
+                name = prompt("أهلاً بك في موقع أحمد السليمان الرسمي، فضلاً أدخل اسمك للدخول:");
+                if (!name || name.trim() === "") name = "زائر مجهول";
+                sessionStorage.setItem('visitor_name', name);
+                
+                // حفظ الاسم في سجل المدير مع الوقت
+                let visitors = JSON.parse(localStorage.getItem(VISITORS_DB)) || [];
+                let now = new Date();
+                let timeStr = now.getHours() + ":" + now.getMinutes() + " - " + now.toLocaleDateString();
+                visitors.push({ name: name, time: timeStr });
+                localStorage.setItem(VISITORS_DB, JSON.stringify(visitors));
+            }
+            document.getElementById('welcomeText').innerText = "أهلاً بك يا " + name;
+        }
+
+        function openAdmin() {
+            if(prompt("كلمة مرور المدير:") === "1234") {
                 document.getElementById('adminPanel').style.display = 'block';
-                window.scrollTo(0,0);
-            } else {
-                alert("كلمة مرور خاطئة!");
+                updateVisitorUI();
             }
         }
 
-        function hideAdmin() {
-            document.getElementById('adminPanel').style.display = 'none';
+        function updateVisitorUI() {
+            const body = document.getElementById('visitorTableBody');
+            const visitors = JSON.parse(localStorage.getItem(VISITORS_DB)) || [];
+            body.innerHTML = visitors.reverse().map(v => `<tr><td>${v.name}</td><td>${v.time}</td></tr>`).join('');
+        }
+
+        function clearVisitors() {
+            if(confirm("هل تريد مسح سجل الزوار؟")) {
+                localStorage.removeItem(VISITORS_DB);
+                updateVisitorUI();
+            }
         }
 
         function addNewEp() {
-            const folder = document.getElementById('fName').value.trim();
-            const episode = document.getElementById('eTitle').value.trim();
-            const url = document.getElementById('uLink').value.trim();
+            const f = document.getElementById('fName').value.trim();
+            const e = document.getElementById('eTitle').value.trim();
+            const u = document.getElementById('uLink').value.trim();
             let id = "";
-            if (url.includes('/d/')) id = url.split('/d/')[1].split('/')[0];
-            else if (url.includes('id=')) id = url.split('id=')[1].split('&')[0];
+            if (u.includes('/d/')) id = u.split('/d/')[1].split('/')[0];
+            else if (u.includes('id=')) id = u.split('id=')[1].split('&')[0];
 
-            if(folder && episode && id) {
+            if(f && e && id) {
                 let db = JSON.parse(localStorage.getItem(DB_NAME)) || [];
-                db.push({ folder, episode, id });
+                db.push({ folder: f, episode: e, id: id });
                 localStorage.setItem(DB_NAME, JSON.stringify(db));
-                document.getElementById('eTitle').value = '';
-                document.getElementById('uLink').value = '';
                 renderUI();
-                alert("تمت الإضافة!");
+                alert("تم النشر!");
             }
         }
 
@@ -124,43 +158,26 @@
             const db = JSON.parse(localStorage.getItem(DB_NAME)) || [];
             grid.innerHTML = '';
             const map = {};
-            db.forEach(item => {
-                if (!map[item.folder]) map[item.folder] = [];
-                map[item.folder].push(item);
-            });
-            for (let name in map) {
-                grid.innerHTML += `
-                    <div class="folder-item" onclick="openFolder('${name}')">
-                        <div class="folder-poster">🎬</div>
-                        <div class="folder-name">${name}</div>
-                    </div>`;
+            db.forEach(i => { if (!map[i.folder]) map[i.folder] = []; map[i.folder].push(i); });
+            for (let n in map) {
+                grid.innerHTML += `<div class="folder-card" onclick="openFolder('${n}')"><div class="folder-img">🎬</div><div class="folder-name">${n}</div></div>`;
             }
         }
 
-        function openFolder(name) {
+        function openFolder(n) {
             const db = JSON.parse(localStorage.getItem(DB_NAME)) || [];
-            const box = document.getElementById('episodesBox');
-            const title = document.getElementById('modalTitle');
-            const modal = document.getElementById('modalBox');
-
-            title.innerText = "مسلسل: " + name;
+            const box = document.getElementById('epsBox');
+            document.getElementById('mTitle').innerText = n;
             box.innerHTML = '';
-            const episodes = db.filter(item => item.folder === name);
-
-            episodes.forEach((item) => {
-                const preview = `https://drive.google.com/file/d/${item.id}/preview`;
-                box.innerHTML += `
-                    <div class="ep-card">
-                        <div class="video-box"><iframe src="${preview}"></iframe></div>
-                        <div style="padding:8px; text-align:center; font-size:0.8rem;">${item.episode}</div>
-                    </div>`;
+            db.filter(i => i.folder === n).forEach(i => {
+                box.innerHTML += `<div class="ep-card"><div class="video-container"><iframe src="https://drive.google.com/file/d/${i.id}/preview"></iframe></div><div style="padding:8px; text-align:center; font-size:0.8rem;">${i.episode}</div></div>`;
             });
-            modal.style.display = 'flex';
+            document.getElementById('vModal').style.display = 'block';
         }
 
         function closeFolder() {
-            document.getElementById('modalBox').style.display = 'none';
-            document.getElementById('episodesBox').innerHTML = ''; // إيقاف الفيديوهات عند الإغلاق
+            document.getElementById('vModal').style.display = 'none';
+            document.getElementById('epsBox').innerHTML = '';
         }
     </script>
 </body>
