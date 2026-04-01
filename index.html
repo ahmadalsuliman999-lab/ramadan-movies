@@ -3,182 +3,91 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>الموقع الرسمي لأحمد السليمان</title>
-    <style>
-        :root { --gold: #ffc107; --bg: #050505; --card: #121212; --accent: #1e1e1e; }
-        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: white; padding: 0; margin: 0; }
-        
-        header { 
-            background: linear-gradient(to bottom, #1a1a1a, var(--bg)); 
-            padding: 30px 10px; text-align: center; border-bottom: 2px solid var(--gold);
-        }
-        header h1 { margin: 0; font-size: 1.6rem; color: var(--gold); }
+    <title>منصتي التعليمية - منيرة عاصي</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+        <link rel="stylesheet" href="exams.css">
+                <link rel="stylesheet" href="lessons.css">
+                                <link rel="stylesheet" href="video.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-        /* لوحة التحكم السرية */
-        #adminPanel { 
-            display: none; background: var(--accent); padding: 20px; border-radius: 12px;
-            border: 1px solid var(--gold); margin: 15px; 
-        }
-        .admin-section { background: #000; padding: 15px; border-radius: 10px; margin-bottom: 15px; border: 1px solid #333; }
-        input { width: 100%; padding: 12px; margin: 8px 0; border-radius: 8px; border: 1px solid #333; background: #000; color: white; box-sizing: border-box; }
-        
-        /* جدول سجل الزوار */
-        table { width: 100%; border-collapse: collapse; font-size: 0.8rem; margin-top: 10px; }
-        th, td { border: 1px solid #333; padding: 8px; text-align: center; }
-        th { background: var(--gold); color: black; }
-
-        .folders-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; padding: 15px; }
-        .folder-card { background: var(--card); border-radius: 12px; overflow: hidden; border: 1px solid #222; cursor: pointer; transition: 0.3s; }
-        .folder-card:hover { border-color: var(--gold); transform: translateY(-3px); }
-        .folder-img { width: 100%; height: 110px; background: #222; display: flex; align-items: center; justify-content: center; font-size: 2rem; }
-        .folder-name { padding: 8px; text-align: center; font-size: 0.75rem; color: #eee; }
-
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 10000; overflow-y: auto; padding-top: 30px; }
-        .modal-content { background: #000; width: 95%; max-width: 800px; margin: auto; border-radius: 20px; border: 1px solid var(--gold); padding: 15px; position: relative; }
-        .episodes-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
-        .ep-card { background: #111; border-radius: 10px; overflow: hidden; border: 1px solid #333; }
-        .video-container { position: relative; padding-bottom: 56.25%; height: 0; }
-        .video-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
-
-        .btn { display: block; width: 100%; padding: 10px; border-radius: 8px; font-weight: bold; cursor: pointer; border: none; text-align: center; }
-        .add-btn { background: var(--gold); color: black; margin-top: 10px; }
-        .close-btn { background: #ff4444; color: white; padding: 5px 15px; border-radius: 8px; margin-bottom: 10px; float: left; cursor: pointer; }
-
-        .secret-trigger { position: fixed; bottom: 0; left: 0; width: 40px; height: 40px; background: transparent; cursor: pointer; z-index: 999; }
-        footer { text-align: center; padding: 20px; color: #444; font-size: 0.7rem; }
-    </style>
 </head>
 <body>
+<header class="main-header">
+    <div class="header-container">
+        <div class="brand-logo" onclick="goHome(0)">
+            <div class="logo-icon">MA</div>
+            <span class="teacher-name">منيرة عاصي</span>
+        </div>
+        <nav class="nav-links">
+            <button class="nav-link active" onclick="goHome(0)"><i class="fas fa-home"></i> الرئيسية</button>
+            <button class="nav-link" onclick="showContact(2)"><i class="fas fa-envelope"></i> تواصل معي</button>
+        </nav>
+    </div>
+</header>
 
-    <header>
-        <h1 id="welcomeText">الموقع الرسمي لأحمد السليمان</h1>
-    </header>
+<main class="app-content">
+    <div id="dashboard-view" class="dashboard-grid fade-in">
+      <div class="dash-card" onclick="openExams()">
+    <div class="card-icon"><i class="fas fa-edit"></i></div>
+    <h2>اختبارات ذكية</h2>
+                 <p>اختبر مستواك وطور مهاراتك من خلال تمارين تفاعلية.</p>
+            <span class="card-action">اختبر نفسك <i class="fas fa-arrow-left"></i></span>
 
-    <div id="adminPanel">
-        <div class="admin-section">
-            <h4 style="color:var(--gold); margin:0;">👥 سجل الزوار (الأسماء)</h4>
-            <div id="visitorList" style="max-height: 200px; overflow-y: auto;">
-                <table>
-                    <thead><tr><th>الاسم</th><th>التوقيت</th></tr></thead>
-                    <tbody id="visitorTableBody"></tbody>
-                </table>
-            </div>
-            <button onclick="clearVisitors()" style="background:none; color:#ff4444; border:none; font-size:0.7rem; cursor:pointer; margin-top:5px;">مسح السجل</button>
+</div>
+
+  
+
+        <div class="dash-card" onclick="openLessons()">
+            <div class="card-icon"><i class="fas fa-book-open"></i></div>
+             <h2>مكتبة الدروس</h2>
+            <p>استكشف المحتوى التعليمي وقواعد اللغة والملفات الشاملة.</p>
+          
+            <span class="card-action">استعراض <i class="fas fa-arrow-left"></i></span>
         </div>
 
-        <div class="admin-section">
-            <h4 style="color:var(--gold); margin:0;">🎬 إضافة حلقة</h4>
-            <input type="text" id="fName" placeholder="اسم المسلسل">
-            <input type="text" id="eTitle" placeholder="رقم الحلقة">
-            <input type="text" id="uLink" placeholder="رابط Google Drive">
-            <button class="btn add-btn" onclick="addNewEp()">نشر الآن</button>
+        <div class="dash-card video-card" onclick="openVideos()">
+            <div class="video-badge">جديد</div>
+            <div class="card-icon"><i class="fas fa-play-circle"></i></div>
+            <h2>الفيديوهات اليومية</h2>
+            <p>شاهد الفيديوهات التعليمية اليومية لتطوير مهاراتك.</p>
+            <span class="card-action">شاهد الآن <i class="fas fa-arrow-left"></i></span>
         </div>
-        <button onclick="document.getElementById('adminPanel').style.display='none'" style="width:100%; background:none; color:#555; border:none; cursor:pointer;">إغلاق</button>
+        
+        <div class="dash-card" onclick="showAboutMe(2)">
+    <div class="card-icon"><i class="fas fa-star"></i></div>
+    <h2>من هي منيره</h2>
+    <p>مدرسة لغة إنجليزية شغوفة بتقديم أفضل طرق التعلم التفاعلية.</p>
+    <span class="card-action">تعرف علي أكثر <i class="fas fa-arrow-left"></i></span>
+</div> </div>
+    
+
+    <div id="content-viewer" class="content-viewer" style="display:none;">
+        <aside class="lesson-sidebar">
+            <ul id="file-list"></ul>
+        </aside>
+        <section class="main-viewer-area" style="flex:1;">
+            <iframe id="main-viewer" src="" style="width:100%; height:100%; border:none;"></iframe>
+        </section>
     </div>
 
-    <div class="folders-grid" id="foldersBox"></div>
-
-    <div id="vModal" class="modal">
-        <div class="modal-content">
-            <button class="close-btn" onclick="closeFolder()">إغلاق ×</button>
-            <div id="mTitle" style="text-align:center; color:var(--gold); margin: 15px 0; font-size: 1.1rem; clear:both;"></div>
-            <div id="epsBox" class="episodes-grid"></div>
-        </div>
+    <div id="contact-box" class="dashboard-grid" style="display:none;"></div>
+</main>
+<div id="full-viewer" class="full-screen-viewer" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100vh; background: white; z-index: 9999; flex-direction: column;">
+    <div class="viewer-header" style="background: var(--white); padding: 15px 25px; border-bottom: 4px solid #eaddca; display: flex; justify-content: space-between; align-items: center;">
+        <h3 id="viewing-file-name" style="color: var(--primary-red); margin: 0;">اسم الدرس</h3>
+        <button onclick="closeFullScreen()" class="nav-link active" style="cursor: pointer; padding: 10px 25px; border-radius: 50px; border: none; background: var(--primary-red); color: white;">
+            <i class="fas fa-times"></i> إغلاق العرض
+        </button>
     </div>
+    
+    <iframe id="file-iframe" src="" style="width: 100%; flex-grow: 1; border: none;"></iframe>
+</div>
+<script src="script.js"></script>
+<script src="exams.js"></script>
+<script src="lessons.js"></script>
+<script src="video.js"></script>
 
-    <footer><p>© أحمد السليمان 2026</p></footer>
-    <div class="secret-trigger" onclick="openAdmin()"></div>
-
-    <script>
-        const DB_NAME = 'ahmed_series_db';
-        const VISITORS_DB = 'ahmed_visitors_db';
-
-        window.onload = function() { 
-            askName();
-            renderUI(); 
-        };
-
-        // دالة طلب الاسم من الزائر
-        function askName() {
-            let name = sessionStorage.getItem('visitor_name');
-            if (!name) {
-                name = prompt("أهلاً بك في موقع أحمد السليمان الرسمي، فضلاً أدخل اسمك للدخول:");
-                if (!name || name.trim() === "") name = "زائر مجهول";
-                sessionStorage.setItem('visitor_name', name);
-                
-                // حفظ الاسم في سجل المدير مع الوقت
-                let visitors = JSON.parse(localStorage.getItem(VISITORS_DB)) || [];
-                let now = new Date();
-                let timeStr = now.getHours() + ":" + now.getMinutes() + " - " + now.toLocaleDateString();
-                visitors.push({ name: name, time: timeStr });
-                localStorage.setItem(VISITORS_DB, JSON.stringify(visitors));
-            }
-            document.getElementById('welcomeText').innerText = "أهلاً بك يا " + name;
-        }
-
-        function openAdmin() {
-            if(prompt("كلمة مرور المدير:") === "1234") {
-                document.getElementById('adminPanel').style.display = 'block';
-                updateVisitorUI();
-            }
-        }
-
-        function updateVisitorUI() {
-            const body = document.getElementById('visitorTableBody');
-            const visitors = JSON.parse(localStorage.getItem(VISITORS_DB)) || [];
-            body.innerHTML = visitors.reverse().map(v => `<tr><td>${v.name}</td><td>${v.time}</td></tr>`).join('');
-        }
-
-        function clearVisitors() {
-            if(confirm("هل تريد مسح سجل الزوار؟")) {
-                localStorage.removeItem(VISITORS_DB);
-                updateVisitorUI();
-            }
-        }
-
-        function addNewEp() {
-            const f = document.getElementById('fName').value.trim();
-            const e = document.getElementById('eTitle').value.trim();
-            const u = document.getElementById('uLink').value.trim();
-            let id = "";
-            if (u.includes('/d/')) id = u.split('/d/')[1].split('/')[0];
-            else if (u.includes('id=')) id = u.split('id=')[1].split('&')[0];
-
-            if(f && e && id) {
-                let db = JSON.parse(localStorage.getItem(DB_NAME)) || [];
-                db.push({ folder: f, episode: e, id: id });
-                localStorage.setItem(DB_NAME, JSON.stringify(db));
-                renderUI();
-                alert("تم النشر!");
-            }
-        }
-
-        function renderUI() {
-            const grid = document.getElementById('foldersBox');
-            const db = JSON.parse(localStorage.getItem(DB_NAME)) || [];
-            grid.innerHTML = '';
-            const map = {};
-            db.forEach(i => { if (!map[i.folder]) map[i.folder] = []; map[i.folder].push(i); });
-            for (let n in map) {
-                grid.innerHTML += `<div class="folder-card" onclick="openFolder('${n}')"><div class="folder-img">🎬</div><div class="folder-name">${n}</div></div>`;
-            }
-        }
-
-        function openFolder(n) {
-            const db = JSON.parse(localStorage.getItem(DB_NAME)) || [];
-            const box = document.getElementById('epsBox');
-            document.getElementById('mTitle').innerText = n;
-            box.innerHTML = '';
-            db.filter(i => i.folder === n).forEach(i => {
-                box.innerHTML += `<div class="ep-card"><div class="video-container"><iframe src="https://drive.google.com/file/d/${i.id}/preview"></iframe></div><div style="padding:8px; text-align:center; font-size:0.8rem;">${i.episode}</div></div>`;
-            });
-            document.getElementById('vModal').style.display = 'block';
-        }
-
-        function closeFolder() {
-            document.getElementById('vModal').style.display = 'none';
-            document.getElementById('epsBox').innerHTML = '';
-        }
-    </script>
 </body>
 </html>

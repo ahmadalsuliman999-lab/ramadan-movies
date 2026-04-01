@@ -1,0 +1,177 @@
+:root {
+    --primary-red: #d32f2f;
+    --dark-red: #9a1f1f;
+    --background: #fdfdfd;
+    --text-dark: #2d3436;
+    --text-light: #636e72;
+    --white: #ffffff;
+    --shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+    --ease: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    
+    /* === اللون الدافئ الجديد للإطار === */
+    --warm-border: rgba(211, 47, 47, 0.15); /* درجة باهتة جداً من الأحمر الدافئ */
+    /* بديل ذهبي دافئ: --warm-border: #e0dbcd; */
+    /* ===================================== */
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+    font-family: 'Tajawal', sans-serif;
+    direction: rtl; background: var(--background);
+    color: var(--text-dark); overflow-x: hidden;
+}
+
+/* Header */
+.main-header {
+    background: var(--white); height: 70px;
+    display: flex; align-items: center;
+    box-shadow: 0 2px 15px rgba(0,0,0,0.02);
+    position: sticky; top: 0; z-index: 1000;
+}
+
+.header-container {
+    display: flex; width: 100%; max-width: 1200px;
+    margin: 0 auto; padding: 0 20px;
+    align-items: center; justify-content: space-between;
+}
+
+.brand-logo { display: flex; align-items: center; gap: 12px; cursor: pointer; }
+.logo-icon {
+    background: linear-gradient(135deg, var(--dark-red), var(--primary-red));
+    color: var(--white); width: 40px; height: 40px;
+    border-radius: 10px; display: flex; align-items: center;
+    justify-content: center; font-weight: 800; font-size: 1.1rem;
+}
+
+.teacher-name { font-size: 1.3rem; font-weight: 700; color: var(--primary-red); }
+
+/* Navigation */
+.nav-links { display: flex; gap: 8px; }
+.nav-link {
+    background: none; border: none; padding: 10px 18px;
+    border-radius: 25px; cursor: pointer; color: var(--text-dark);
+    font-size: 1rem; font-weight: 500; font-family: inherit;
+    transition: var(--ease); display: flex; align-items: center; gap: 8px;
+}
+.nav-link.active { background: var(--primary-red); color: var(--white); }
+
+/* Dashboard Grid */
+/* للموبايل */
+@media (max-width: 600px) {
+    .dashboard-grid {
+        grid-template-columns: 1fr; /* كرت واحد في الصف */
+    }
+}
+/* حركة إضافية عند مرور الماوس لتحديد الحواف أكثر */
+.dash-card:hover {
+    transform: translateY(-5px);
+    border-color: var(--primary-red); /* يتغير الإطار للون الأحمر عند التأشير */
+    box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+}
+.card-action {
+    font-size: 0.9rem; font-weight: 700; color: var(--primary-red);
+    display: flex; align-items: center; gap: 5px;
+}
+
+
+/* Mobile */
+/* تعديل شبكة الكروت لتظهر كرتين في كل صف */
+/* التنسيق المحدث لكروت أصغر وأكثر تناسقاً */
+/**/
+.dash-card {
+    background: var(--white);
+    padding: 20px 15px; /* تقليل المسافات الداخلية */
+    border-radius: 15px; /* حواف أنعم قليلاً لتناسب الحجم الأصغر */
+    
+    /* الإطار الدافئ والواضح الذي طلبته */
+    border: 3px solid #eaddca; 
+    box-shadow: var(--shadow);
+    transition: var(--ease);
+    
+    /* توحيد المقاسات بحجم أصغر */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    justify-content: space-between;
+    min-height: 250px; /* تقليل الارتفاع الأدنى من 320 إلى 250 */
+    height: 100%;
+}
+
+/* تصغير حجم الأيقونة لتناسب الكرت */
+.card-icon {
+    font-size: 2rem; /* تصغير من 2.5 إلى 2 */
+    color: var(--primary-red);
+    margin-bottom: 10px;
+    height: 50px; 
+    display: flex;
+    align-items: center;
+}
+
+/* تصغير الخطوط داخل الكرت */
+.dash-card h2 {
+    font-size: 1.2rem; /* تصغير العنوان */
+    margin-bottom: 8px;
+}
+
+.dash-card p {
+    font-size: 0.85rem; /* تصغير النص الوصفي */
+    line-height: 1.5;
+}
+
+/* تصغير شبكة العرض لتقليل عرض الكروت */
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px; /* تقليل المسافة بين الكروت */
+    padding: 30px 20px;
+    max-width: 900px; /* تقليل العرض الأقصى للشبكة ليصبح الكرت أنحل */
+    margin: 0 auto;
+    align-items: stretch;
+}
+/* تنسيق عرض الملف المفتوح */
+.full-screen-viewer {
+    display: none; /* مخفي حتى يتم النقر على درس */
+}
+
+.viewer-header h3 {
+    font-family: 'Tajawal', sans-serif;
+    font-size: 1.2rem;
+}
+
+/* تأثير بسيط عند الوقوف على زر الإغلاق */
+.viewer-header button:hover {
+    background-color: var(--dark-red) !important;
+    transform: scale(1.05);
+    transition: 0.3s;
+}
+#file-iframe {
+    width: 100%;
+    height: 100%; /* ملء المساحة المتبقية */
+    border: none;
+    display: block;
+    /* تحسين التمرير على الموبايل */
+    -webkit-overflow-scrolling: touch;
+}
+
+#full-viewer {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw; /* عرض الشاشة بالكامل */
+    height: 100dvh; /* ارتفاع الشاشة الديناميكي للموبايل */
+    background: white;
+    z-index: 9999;
+    display: none;
+    flex-direction: column;
+}
+/* تأثير الوميض الضوئي */
+.flash-effect {
+    animation: flash-animation 0.4s ease-out;
+}
+
+@keyframes flash-animation {
+    0% { background-color: transparent; }
+    50% { background-color: rgba(211, 47, 47, 0.3); transform: scale(0.95); }
+    100% { background-color: transparent; transform: scale(1); }
+}
